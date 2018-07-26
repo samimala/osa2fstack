@@ -14,8 +14,12 @@ class App extends React.Component {
   }
 
   handlePersonChange = (event) => {
-    console.log(event.target.value)
-    this.setState({newName: event.target.value})
+    //console.log(event.target.value)
+    this.setState({ newName: event.target.value })
+  }
+
+  personExists = (newperson) => {
+    return this.state.persons.find(person=>(person.name===newperson.name))
   }
 
   addPerson = (event) => {
@@ -23,6 +27,13 @@ class App extends React.Component {
     const personObject = {
         name: this.state.newName
     }   
+
+    if (this.personExists(personObject)) {
+        alert('On jo')
+        this.setState({newName:''})
+        return;
+    }
+
     const persons = this.state.persons.concat(personObject)
 
     this.setState({
