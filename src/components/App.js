@@ -6,17 +6,26 @@ class App extends React.Component {
     super(props)
     this.state = {
       persons: [
-        { name: 'Arto Hellas', number: '040-12345' },
-        { name: 'Esko Ukkonen', number: '09-546272' }
-      ],
+        { name: 'Arto Hellas', number: '040-123456' },
+        { name: 'Martti Tienari', number: '040-123456' },
+        { name: 'Arto Järvinen', number: '040-123456' },
+        { name: 'Lea Kutvonen', number: '040-123456' }
+          ],
       uusiNimi: '',
-      uusiNumero: ''
+      uusiNumero: '',
+
+      nimiRajaus: ''
     }
   }
 
   handleNameChange = (event) => {
     //console.log(event.target.value)
     this.setState({ uusiNimi: event.target.value })
+  }
+
+  handleNimirajausChange = (event) => {
+    //console.log(event.target.value)
+    this.setState({ nimiRajaus: event.target.value })
   }
 
   handleNumberChange = (event) => {
@@ -51,10 +60,24 @@ class App extends React.Component {
   }
   
   
+  nameFilter = (name) => {
+      return (name.toUpperCase().indexOf(this.state.nimiRajaus.toUpperCase())===0)
+  }
+
   render() {
     return (
       <div>
-        <h2>Puhelinluettelo</h2>
+        <h1>Puhelinluettelo</h1>
+
+        <div>
+            rajaa näytettäviä: 
+            <input 
+              value={this.state.nimRajaus}
+              onChange={this.handleNimirajausChange} 
+            />
+        </div>
+
+        <h2>Lisää uusi</h2>
         <form onSubmit={this.addPerson}>
           <div>
             nimi: 
@@ -75,7 +98,7 @@ class App extends React.Component {
           </div>
         </form>
         <h2>Numerot</h2>    
-        <Henkilot persons={this.state.persons} />
+        <Henkilot persons={this.state.persons.filter(person=>this.nameFilter(person.name))} />
       </div>
     )
   }
