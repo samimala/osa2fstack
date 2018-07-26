@@ -12,6 +12,7 @@ class App extends React.Component {
       nimiRajaus: ''
     }
   }
+
   handleNimirajausChange = (event) => {
     //console.log(event.target.value)
     this.setState({ nimiRajaus: event.target.value })
@@ -33,13 +34,16 @@ class App extends React.Component {
   }
 
 
-
   render() {     
     let maatFiltered = this.state.countries.filter(maa=>this.nameFilter(maa.name))
     const rajausOtsikko='Find countries: '
     //console.log(maatFiltered)
     //console.log(maatFiltered.length)
-
+    const clickValinta = (maa) => ()  => {
+      //console.log('Klikattu ' +  maa)
+      this.setState({nimiRajaus: maa})
+    }
+  
     if (maatFiltered.length>10) {
       return (
         <div>
@@ -66,7 +70,8 @@ class App extends React.Component {
           {maatFiltered.map(maa=> 
               <Maa
                  naytaKaikki={false} 
-                 nimi={maa.name} 
+                 nimi={maa.name}
+                 onClick={clickValinta(maa.name)}
                  key={maa.alpha3Code} 
               />)}
         </div>

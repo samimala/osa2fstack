@@ -15,7 +15,7 @@ const Maa = (props) => {
     }
 
     return (
-        <div>{props.nimi}</div>
+        <div onClick={props.onClick}>{props.nimi}</div>
     )
 }
 
