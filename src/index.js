@@ -15,10 +15,12 @@ const Otsikko = (props) => {
 }
 
 const Sisalto = (props) => {
+    //console.log(props.kurssi.osat.reduce((x,y )=>x+=y.tehtavia,0))
     return (
         <div>
         {props.kurssi.osat.map(
-            osa => <Osa osanimi={osa.nimi} tehtavat={osa.tehtavia} key={osa.id} /> )}   
+            osa => <Osa osanimi={osa.nimi} tehtavat={osa.tehtavia} key={osa.id} /> )}
+        <p>yhteensä {props.kurssi.osat.reduce((x,y)=>x+=y.tehtavia,0)} tehtävää</p>   
         </div>
     )
 }
@@ -38,17 +40,22 @@ const App = () => {
             nimi: 'Reactin perusteet',
             tehtavia: 10,
             id: 1
-          },
-          {
+        },
+        {
             nimi: 'Tiedonvälitys propseilla',
             tehtavia: 7,
             id: 2
-          },
-          {
+        },
+        {
             nimi: 'Komponenttien tila',
             tehtavia: 14,
             id: 3
-          }
+        },
+        {
+            nimi: 'Redux',
+            tehtavia: 7,
+            id: 4
+        }
       ]
     }
   
@@ -57,7 +64,7 @@ const App = () => {
         <Kurssi kurssi={kurssi} />
       </div>
     )
-  }
+}
   
 ReactDOM.render(
     <App />, 
