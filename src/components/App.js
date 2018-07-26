@@ -6,16 +6,22 @@ class App extends React.Component {
     super(props)
     this.state = {
       persons: [
-        { name: 'Arto Hellas' },
-        { name: 'Esko Ukkonen' }
+        { name: 'Arto Hellas', number: '040-12345' },
+        { name: 'Esko Ukkonen', number: '09-546272' }
       ],
-      newName: ''
+      uusiNimi: '',
+      uusiNumero: ''
     }
   }
 
-  handlePersonChange = (event) => {
+  handleNameChange = (event) => {
     //console.log(event.target.value)
-    this.setState({ newName: event.target.value })
+    this.setState({ uusiNimi: event.target.value })
+  }
+
+  handleNumberChange = (event) => {
+    //console.log(event.target.value)
+    this.setState({ uusiNumero: event.target.value })
   }
 
   personExists = (newperson) => {
@@ -25,12 +31,13 @@ class App extends React.Component {
   addPerson = (event) => {
     event.preventDefault()
     const personObject = {
-        name: this.state.newName
+        name: this.state.uusiNimi,
+        number: this.state.uusiNumero
     }   
 
     if (this.personExists(personObject)) {
         alert('On jo')
-        this.setState({newName:''})
+        this.setState({uusiNimi:'', uusiNumero:''})
         return;
     }
 
@@ -38,7 +45,8 @@ class App extends React.Component {
 
     this.setState({
         persons,
-        newName: ''
+        uusiNimi: '',
+        uusiNumero:''
     })
   }
   
@@ -51,15 +59,22 @@ class App extends React.Component {
           <div>
             nimi: 
             <input 
-              value={this.state.newName}
-              onChange={this.handlePersonChange} 
+              value={this.state.uusiNimi}
+              onChange={this.handleNameChange} 
+            />
+          </div>
+          <div>
+            numero: 
+            <input 
+              value={this.state.uusiNumero}
+              onChange={this.handleNumberChange} 
             />
           </div>
           <div>
             <button type="submit">lisää</button>
           </div>
         </form>
-        <h2>Henkilot</h2>    
+        <h2>Numerot</h2>    
         <Henkilot persons={this.state.persons} />
       </div>
     )

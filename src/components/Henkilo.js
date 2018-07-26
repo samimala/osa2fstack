@@ -2,7 +2,10 @@ import React from 'react'
 
 const Henkilo = (props) => {
     return (
-        <div>{props.person}</div>
+        <tr>
+        <td>{props.name}</td>
+        <td>{props.number}</td>
+        </tr>
     )
 }
 

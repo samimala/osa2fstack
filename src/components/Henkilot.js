@@ -5,7 +5,13 @@ const Henkilot = (props) => {
     //console.log(props)
     //console.log(props.persons.map(x=>(x.name)))
     return (
-    props.persons.map(x=><Henkilo person={x.name} key={x.name} /> )
+    <table>
+    <tbody>     
+    { props.persons.map(
+            person=><Henkilo name={person.name} number={person.number} key={person.name} /> 
+      )} 
+    </tbody>
+    </table>
     )
 }
 
