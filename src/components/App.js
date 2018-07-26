@@ -1,100 +1,112 @@
 import React from 'react';
-import Henkilot from './Henkilot';
-import RajausFiltteri from './RajausFiltteri';
-import FormLisaaHlo from './FormLisaaHlo';
 import axios from 'axios';
+import RajausFiltteri from './RajausFiltteri';
+import Maa from './Maa';
 
 class App extends React.Component {
   constructor() {
     super()
     this.state = {
-      persons: [],
-      uusiNimi: '',
-      uusiNumero: '',
-
+      countries: [],
+    
       nimiRajaus: ''
     }
   }
-
-  handleNameChange = (event) => {
-    //console.log(event.target.value)
-    this.setState({ uusiNimi: event.target.value })
-  }
-
   handleNimirajausChange = (event) => {
     //console.log(event.target.value)
     this.setState({ nimiRajaus: event.target.value })
   }
 
-  handleNumberChange = (event) => {
-    //console.log(event.target.value)
-    this.setState({ uusiNumero: event.target.value })
-  }
-
-  personExists = (newperson) => {
-    return this.state.persons.find(person=>(person.name===newperson.name))
-  }
 
   componentDidMount() {
     console.log('did mount')
     axios
-      .get('http://localhost:3001/persons')
+      .get('https://restcountries.eu/rest/v2/all')
       .then(response => {
-        console.log('promise fulfilled')
-        console.log(response.data)
-        this.setState({ persons: response.data })
+        console.log('countries retrieved')
+        this.setState({ countries: response.data })
       })
   }
-
-  addPerson = (event) => {
-    event.preventDefault()
-    const personObject = {
-        name: this.state.uusiNimi,
-        number: this.state.uusiNumero
-    }   
-
-    if (this.personExists(personObject)) {
-        alert('On jo')
-        this.setState({uusiNimi:'', uusiNumero:''})
-        return;
-    }
-
-    const persons = this.state.persons.concat(personObject)
-
-    this.setState({
-        persons,
-        uusiNimi: '',
-        uusiNumero:''
-    })
-  }
-  
   
   nameFilter = (name) => {
       return (name.toUpperCase().indexOf(this.state.nimiRajaus.toUpperCase())===0)
   }
 
-  render() {
+
+
+  render() {     
+    let maatFiltered = this.state.countries.filter(maa=>this.nameFilter(maa.name))
+    const rajausOtsikko='Find countries: '
+    //console.log(maatFiltered)
+    //console.log(maatFiltered.length)
+
+    if (maatFiltered.length>10) {
+      return (
+        <div>
+          <RajausFiltteri 
+              otsikko={rajausOtsikko}
+              value={this.state.nimiRajaus}
+              onChange={this.handleNimirajausChange} 
+          />
+
+          <p>Too many matches (over 10), specify another filter</p>
+        </div>
+      )
+    }
+
+    if (maatFiltered.length>1) {
+      return (
+        <div>
+          <RajausFiltteri
+              otsikko={rajausOtsikko}               
+              value={this.state.nimiRajaus}
+              onChange={this.handleNimirajausChange} 
+          />
+
+          {maatFiltered.map(maa=> 
+              <Maa
+                 naytaKaikki={false} 
+                 nimi={maa.name} 
+                 key={maa.alpha3Code} 
+              />)}
+        </div>
+      )
+    }
+
+    if (maatFiltered.length===1) {
+      return (
+        <div>
+          <RajausFiltteri            
+              otsikko={rajausOtsikko}   
+              value={this.state.nimiRajaus}
+              onChange={this.handleNimirajausChange} 
+          />
+
+          {maatFiltered.map(maa=> 
+               <Maa 
+                  naytaKaikki={true}
+                  nimi={maa.name}
+                  pkaupunki={maa.capital}
+                  vaesto={maa.population}
+                  natiiviNimi={maa.nativeName}
+                  lippuUrl={maa.flag}
+                  key={maa.alpha3Code} 
+               />)}
+        </div>
+      )
+    }
+
     return (
       <div>
-        <h1>Puhelinluettelo</h1>
-
-        <RajausFiltteri               
-            value={this.state.nimRajaus}
+        <RajausFiltteri
+            otsikko={rajausOtsikko}               
+            value={this.state.nimiRajaus}
             onChange={this.handleNimirajausChange} 
         />
 
-        <FormLisaaHlo
-            uusiNimi={this.state.uusiNimi}
-            handleNameChange={this.handleNameChange}
-            uusiNumero={this.state.uusiNumero}
-            handleNumberChange={this.handleNumberChange}
-            addPerson={this.addPerson}
-        />
-
-        <h2>Numerot</h2>    
-        <Henkilot persons={this.state.persons.filter(person=>this.nameFilter(person.name))} />
-      </div>
-    )
+          <p>No matches, specify another filter</p>
+        </div>
+      )
   }
 }
 

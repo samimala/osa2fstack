@@ -3,7 +3,7 @@ import React from 'react';
 const RajausFiltteri = (props) => {
     return (
         <div>
-            rajaa näytettäviä: 
+            {props.otsikko} 
             <input 
               value={props.value}
               onChange={props.onChange} 
