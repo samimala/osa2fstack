@@ -2,17 +2,13 @@ import React from 'react';
 import Henkilot from './Henkilot';
 import RajausFiltteri from './RajausFiltteri';
 import FormLisaaHlo from './FormLisaaHlo';
+import axios from 'axios';
 
 class App extends React.Component {
-  constructor(props) {
-    super(props)
+  constructor() {
+    super()
     this.state = {
-      persons: [
-        { name: 'Arto Hellas', number: '040-12345' },
-        { name: 'Martti Tienari', number: '040-123456' },
-        { name: 'Arto Järvinen', number: '040-123457' },
-        { name: 'Lea Kutvonen', number: '040-123458' }
-          ],
+      persons: [],
       uusiNimi: '',
       uusiNumero: '',
 
@@ -37,6 +33,17 @@ class App extends React.Component {
 
   personExists = (newperson) => {
     return this.state.persons.find(person=>(person.name===newperson.name))
+  }
+
+  componentDidMount() {
+    console.log('did mount')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        console.log(response.data)
+        this.setState({ persons: response.data })
+      })
   }
 
   addPerson = (event) => {
