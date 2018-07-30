@@ -1,5 +1,5 @@
 import React from 'react';
-import personService from '../services/persons.js'
+import personService from '../services/persons.js';
 import Henkilot from './Henkilot';
 import RajausFiltteri from './RajausFiltteri';
 import FormLisaaHlo from './FormLisaaHlo';
@@ -36,7 +36,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    console.log('did mount')
+    //console.log('did mount')
     personService
       .getAll()
       .then(response => {
@@ -73,6 +73,24 @@ class App extends React.Component {
   }
   
   
+  removePerson = (name) => () => {
+    console.log('poistetaan ', name)
+    
+    if (!window.confirm('Poistetaanko ' + name + '?')) return
+
+    const id = this.state.persons.find(person=>person.name===name).id
+    console.log('eli ', id)
+    personService
+      .remove(id)
+      .then(
+        res=>{
+          console.log(res)
+        }
+      )
+
+      this.setState({persons: this.state.persons.filter(person=>person.name!==name)})
+    }
+
   nameFilter = (name) => {
       return (name.toUpperCase().indexOf(this.state.nimiRajaus.toUpperCase())===0)
   }
@@ -96,7 +114,10 @@ class App extends React.Component {
         />
 
         <h2>Numerot</h2>    
-        <Henkilot persons={this.state.persons.filter(person=>this.nameFilter(person.name))} />
+        <Henkilot 
+            persons={this.state.persons.filter(person=>this.nameFilter(person.name))}
+            poista = {this.removePerson}
+        />
       </div>
     )
   }

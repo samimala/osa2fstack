@@ -5,6 +5,7 @@ const Henkilo = (props) => {
         <tr>
         <td>{props.name}</td>
         <td>{props.number}</td>
+        <td><button onClick={props.poista}>poista</button></td>
         </tr>
     )
 }

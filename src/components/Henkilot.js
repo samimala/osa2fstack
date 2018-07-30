@@ -8,7 +8,10 @@ const Henkilot = (props) => {
     <table>
     <tbody>     
     { props.persons.map(
-            person=><Henkilo name={person.name} number={person.number} key={person.name} /> 
+            person=><Henkilo 
+                        name={person.name} number={person.number} key={person.name}
+                        poista={props.poista(person.name)} 
+                    /> 
       )} 
     </tbody>
     </table>
