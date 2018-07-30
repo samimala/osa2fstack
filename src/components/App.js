@@ -53,7 +53,8 @@ class App extends React.Component {
 
   addPerson = (event) => {
     event.preventDefault()
-    const newPerson = {
+    let okToReturn = false;
+    let newPerson = {
         name: this.state.uusiNimi,
         number: this.state.uusiNumero
     }   
@@ -78,9 +79,16 @@ class App extends React.Component {
             uusiNumero:'',
             noteText: 'Numero vaihdettu henkilölle ' + newPerson.name
           })
-          this.clearNoteAfter(4000)
+          okToReturn = true;
         })
-        return;
+        .catch(err => {
+          this.setState({
+            persons: this.state.persons.filter(person=>person.name!==newPerson.name),
+            noteText: 'Henkilo ' + newPerson.name + ' oli poistettu, laitan takaisin'})
+            okToReturn = false;
+        })
+        this.clearNoteAfter(4000)
+        if (okToReturn) return;
     }
 
 
