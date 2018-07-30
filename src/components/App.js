@@ -70,14 +70,16 @@ class App extends React.Component {
       newPerson.id = oldPerson.id;
       personService
         .update(newPerson.id, newPerson)
-        .then(res=>console.log(res))
-        this.setState({
-          persons: this.state.persons.map(person=>(person.name===newPerson.name)?newPerson:person),
-          uusiNimi:'', 
-          uusiNumero:'',
-          noteText: 'Numero vaihdettu henkilölle ' + newPerson.name
+        .then(res=> {
+          console.log(res)
+          this.setState({
+            persons: this.state.persons.map(person=>(person.name===newPerson.name)?newPerson:person),
+            uusiNimi:'', 
+            uusiNumero:'',
+            noteText: 'Numero vaihdettu henkilölle ' + newPerson.name
+          })
+          this.clearNoteAfter(4000)
         })
-        this.clearNoteAfter(4000)
         return;
     }
 
