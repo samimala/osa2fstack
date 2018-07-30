@@ -3,6 +3,7 @@ import personService from '../services/persons.js';
 import Henkilot from './Henkilot';
 import RajausFiltteri from './RajausFiltteri';
 import FormLisaaHlo from './FormLisaaHlo';
+import Notification from './Notification';
 
 class App extends React.Component {
   constructor() {
@@ -12,7 +13,8 @@ class App extends React.Component {
       uusiNimi: '',
       uusiNumero: '',
 
-      nimiRajaus: ''
+      nimiRajaus: '',
+      noteText: null
     }
   }
 
@@ -31,6 +33,12 @@ class App extends React.Component {
     this.setState({ uusiNumero: event.target.value })
   }
 
+  clearNoteAfter = (time) => {
+    //console.log('Clearing note after ' + time)
+    setTimeout(() => {
+      //console.log('Putsaus ', this)
+      this.setState({noteText: null})}, time);
+  }
 
   componentDidMount() {
     //console.log('did mount')
@@ -66,7 +74,10 @@ class App extends React.Component {
         this.setState({
           persons: this.state.persons.map(person=>(person.name===newPerson.name)?newPerson:person),
           uusiNimi:'', 
-          uusiNumero:''})
+          uusiNumero:'',
+          noteText: 'Numero vaihdettu henkilölle ' + newPerson.name
+        })
+        this.clearNoteAfter(4000)
         return;
     }
 
@@ -78,8 +89,10 @@ class App extends React.Component {
         this.setState({ 
           persons: this.state.persons.concat(response.data),
           uusiNimi:'', 
-          uusiNumero:'' 
+          uusiNumero:'', 
+          noteText: 'Lisätty uusi henkilö ' + newPerson.name
         })
+        this.clearNoteAfter(4000)
       })
   }
   
@@ -96,10 +109,13 @@ class App extends React.Component {
       .then(
         res=>{
           console.log(res)
+          this.setState({
+            persons: this.state.persons.filter(person=>person.name!==name),
+            noteText: "Poistettiin henkilö " + name
+          })
+          this.clearNoteAfter(4000);
         }
       )
-
-      this.setState({persons: this.state.persons.filter(person=>person.name!==name)})
     }
 
   nameFilter = (name) => {
@@ -110,6 +126,8 @@ class App extends React.Component {
     return (
       <div>
         <h1>Puhelinluettelo</h1>
+
+        <Notification message={this.state.noteText} />
 
         <RajausFiltteri               
             value={this.state.nimRajaus}
