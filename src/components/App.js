@@ -1,8 +1,8 @@
 import React from 'react';
+import personService from '../services/persons.js'
 import Henkilot from './Henkilot';
 import RajausFiltteri from './RajausFiltteri';
 import FormLisaaHlo from './FormLisaaHlo';
-import axios from 'axios';
 
 class App extends React.Component {
   constructor() {
@@ -37,8 +37,8 @@ class App extends React.Component {
 
   componentDidMount() {
     console.log('did mount')
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then(response => {
         console.log('promise fulfilled')
         console.log(response.data)
@@ -60,8 +60,8 @@ class App extends React.Component {
     }
 
 
-    axios
-      .post('http://localhost:3001/persons', personObject)
+    personService
+      .create(personObject)
       .then(response => {
         console.log(response)
         this.setState({ 
