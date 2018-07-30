@@ -31,9 +31,6 @@ class App extends React.Component {
     this.setState({ uusiNumero: event.target.value })
   }
 
-  personExists = (newperson) => {
-    return this.state.persons.find(person=>(person.name===newperson.name))
-  }
 
   componentDidMount() {
     //console.log('did mount')
@@ -48,20 +45,34 @@ class App extends React.Component {
 
   addPerson = (event) => {
     event.preventDefault()
-    const personObject = {
+    const newPerson = {
         name: this.state.uusiNimi,
         number: this.state.uusiNumero
     }   
 
-    if (this.personExists(personObject)) {
-        alert('On jo')
-        this.setState({uusiNimi:'', uusiNumero:''})
+    const oldPerson = this.state.persons.find(person=>(person.name===newPerson.name))
+    if (oldPerson){
+      if (!window.confirm(oldPerson.name + ' on jo luettelossa,\nkorvataanko vanha numero uudella?') ) {
+        this.setState({
+          uusiNimi:'', 
+          uusiNumero:''
+        })
+        return
+      }
+      newPerson.id = oldPerson.id;
+      personService
+        .update(newPerson.id, newPerson)
+        .then(res=>console.log(res))
+        this.setState({
+          persons: this.state.persons.map(person=>(person.name===newPerson.name)?newPerson:person),
+          uusiNimi:'', 
+          uusiNumero:''})
         return;
     }
 
 
     personService
-      .create(personObject)
+      .create(newPerson)
       .then(response => {
         console.log(response)
         this.setState({ 
