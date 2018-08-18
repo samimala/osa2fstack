@@ -51,57 +51,62 @@ class App extends React.Component {
       })
   }
 
+  addNewPerson = (person) =>  {
+    personService
+    .create(person)
+    .then(response => {
+      console.log(response)
+      this.setState({ 
+        persons: this.state.persons.concat(response.data),
+        uusiNimi:'', 
+        uusiNumero:'', 
+        noteText: 'Lisätty uusi henkilö ' + response.data.name
+      })
+      this.clearNoteAfter(4000)
+    })
+  }
+
+
   addPerson = (event) => {
     event.preventDefault()
-    let okToReturn = false;
     let newPerson = {
         name: this.state.uusiNimi,
         number: this.state.uusiNumero
     }   
 
     const oldPerson = this.state.persons.find(person=>(person.name===newPerson.name))
-    if (oldPerson){
-      if (!window.confirm(oldPerson.name + ' on jo luettelossa,\nkorvataanko vanha numero uudella?') ) {
-        this.setState({
-          uusiNimi:'', 
-          uusiNumero:''
-        })
-        return
-      }
-      newPerson.id = oldPerson.id;
-      personService
-        .update(newPerson.id, newPerson)
-        .then(res=> {
-          console.log(res)
-          this.setState({
-            persons: this.state.persons.map(person=>(person.name===newPerson.name)?newPerson:person),
-            uusiNimi:'', 
-            uusiNumero:'',
-            noteText: 'Numero vaihdettu henkilölle ' + newPerson.name
-          })
-          okToReturn = true;
-        })
-        .catch(err => {
-          this.setState({
-            persons: this.state.persons.filter(person=>person.name!==newPerson.name),
-            noteText: 'Henkilo ' + newPerson.name + ' oli poistettu, laitan takaisin'})
-            okToReturn = false;
-        })
-        this.clearNoteAfter(4000)
-        if (okToReturn) return;
+    if (!oldPerson){
+      this.addNewPerson(newPerson)
+      return
     }
 
-
+    if (!window.confirm(oldPerson.name + ' on jo luettelossa,\nkorvataanko vanha numero uudella?') ) {
+      this.setState({
+        uusiNimi:'', 
+        uusiNumero:''
+      })
+      return
+    }
+    newPerson.id = oldPerson.id;
     personService
-      .create(newPerson)
-      .then(response => {
-        console.log(response)
-        this.setState({ 
-          persons: this.state.persons.concat(response.data),
+      .update(newPerson.id, newPerson)
+      .then(res=> {
+        console.log(res)
+        this.setState({
+          persons: this.state.persons.map(person=>(person.name===res.data.name)?res.data:person),
           uusiNimi:'', 
-          uusiNumero:'', 
-          noteText: 'Lisätty uusi henkilö ' + newPerson.name
+          uusiNumero:'',
+          noteText: 'Numero vaihdettu henkilölle ' + newPerson.name
         })
+        this.clearNoteAfter(4000)
+        return
+      })
+      .catch(err => {
+        this.setState({
+          persons: this.state.persons.filter(person=>person.name!==newPerson.name),
+          noteText: 'Henkilo ' + newPerson.name + ' oli poistettu, laitan takaisin'
+        })
+        this.addNewPerson(newPerson)
         this.clearNoteAfter(4000)
       })
   }
